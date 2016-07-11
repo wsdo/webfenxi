@@ -1,0 +1,39 @@
+FROM codemix/yii2-base:2.0.6-php-fpm
+
+# 安装 Redis
+# COPY php/redis.tgz /home/redis.tgz
+
+#RUN pecl install /home/redis.tgz \
+#   && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
+
+# 安装 NewRelic
+RUN mkdir -p /etc/apt/sources.list.d \
+    && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' \
+        >> /etc/apt/sources.list.d/newrelic.list \
+
+    # 添加 NewRelic APT 下载时用来验证的 GPG 公钥
+    && curl -s https://download.newrelic.com/548C16BF.gpg \
+        | apt-key add - \
+# 安装 NewRelic PHP 代理
+    && apt-get update \
+    && apt-get install -y newrelic-php5 \
+#  && newrelic-install install \
+ # 用完包管理器后安排打扫卫生可以显著的减少镜像大小
+    && apt-get clean \
+    && apt-get autoclean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+ENV NR_INSTALL_SILENT true
+ENV NR_PHP_INI "/usr/local/etc/php/conf.d/newrelic.ini"
+
+RUN mv /usr/local/php /usr/local/php-a \
+  && ln -s /usr/local/bin/php /usr/local/php \
+  && newrelic-install  install \
+  && unlink /usr/local/php \
+  && mv /usr/local/php-a /usr/local/php
+
+RUN sed -i 's/"REPLACE_WITH_REAL_KEY"/\${NEW_RELIC_LICENSE_KEY}/g' \
+    /usr/local/etc/php/conf.d/newrelic.ini
+RUN sed -i 's/"PHP Application"/\${NEW_RELIC_APP_NAME}/g' \
+    /usr/local/etc/php/conf.d/newrelic.ini
