@@ -1,9 +1,7 @@
 #!/bin/bash
-
 VM=default
 DOCKER_MACHINE=/usr/local/bin/docker-machine
 VBOXMANAGE=/Applications/VirtualBox.app/Contents/MacOS/VBoxManage
-
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 NC='\033[0m'
