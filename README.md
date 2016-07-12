@@ -1,6 +1,7 @@
+
 yii2 docker 脚手架
 Docker-yii2-api-scaffold
-================
+
 执行数据库迁移
 docker exec -i webfenxi_app_1  ./yii migrate
 
@@ -44,3 +45,6 @@ done, you can access the new app from [http://localhost:8080](http://localost:80
 > ```
 
 Please check the [Wiki](https://github.com/codemix/yii2-dockerized/wiki) for full documentation.
+=======
+# webfenxi
+>>>>>>> 21abd627987aa6eec27c7732c4899f46297ae9a5
