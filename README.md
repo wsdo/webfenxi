@@ -1,8 +1,8 @@
 yii2 docker 脚手架
 Docker-yii2-api-scaffold
 ================
-
-
+执行数据库迁移
+docker exec -i webfenxi_app_1  ./yii migrate
 
  * Ephemeral container, configured via environment variables
  * Testing container for easy testing
