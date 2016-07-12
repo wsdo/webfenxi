@@ -17,18 +17,7 @@ RUN pecl install channel://pecl.php.net/v8js-0.1.3
 RUN echo extension=v8js.so >> /etc/php5/cli/php.ini
 
 
-# 安装 NewRelic
-RUN mkdir -p /etc/apt/sources.list.d \
-    && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' \
-        >> /etc/apt/sources.list.d/newrelic.list \
 
-    # 添加 NewRelic APT 下载时用来验证的 GPG 公钥
-    && curl -s https://download.newrelic.com/548C16BF.gpg \
-        | apt-key add - \
-# 安装 NewRelic PHP 代理
-    && apt-get update \
-    && apt-get install -y newrelic-php5 \
-#  && newrelic-install install \
  # 用完包管理器后安排打扫卫生可以显著的减少镜像大小
     && apt-get clean \
     && apt-get autoclean \
