@@ -1,7 +1,7 @@
 #FROM codemix/yii2-base:2.0.8-php7-apache
-FROM codemix/yii2-base:2.0.8-php7-fpm
+#FROM codemix/yii2-base:2.0.8-php7-fpm
 #FROM codemix/yii2-base:2.0.8-hhvm
-
+FROM daocloud.io/wshudong/webfenxi-base:latest
 
 # Composer packages are installed first. This will only add packages
 # that are not already in the yii2-base image.

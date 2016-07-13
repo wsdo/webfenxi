@@ -1,4 +1,5 @@
 FROM codemix/yii2-base:2.0.6-php-fpm
+#codemix/yii2-base:2.0.8-php7-fpm
 
 # 安装 v8js
 
