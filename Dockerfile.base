@@ -1,13 +1,5 @@
 FROM codemix/yii2-base:2.0.6-php-fpm
 
-# 安装 Redis
-# Install Redis
-# Copy the redis Extension file
-# COPY php/redis.tgz /home/redis.tgz
-
-# RUN pecl install /home/redis.tgz \
-  && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
-  
 # 安装 v8js
 
 RUN apt-get update
