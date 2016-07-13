@@ -5,13 +5,11 @@ FROM daocloud.io/wshudong/webfenxi-base:latest
 
 # Composer packages are installed first. This will only add packages
 # that are not already in the yii2-base image.
-COPY composer.json /var/www/html/
-COPY composer.lock /var/www/html/
-RUN composer self-update --no-progress && \
-    composer install --no-progress
 
-# Copy the working dir to the image's web root
 COPY . /var/www/html
+RUN composer global require fxp/composer-asset-plugin:~1.1.3 --no-plugins  && \
+    composer self-update --no-progress && \
+    composer install --no-progress
 
 # The following directories are .dockerignored to not pollute the docker images
 # with local logs and published assets from development. So we need to create
