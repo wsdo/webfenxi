@@ -59,9 +59,11 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            // 'enablePrettyUrl' => true,
             'enableStrictParsing' => true,
-            'rules' => require('urls.php'),
+            'rules' => [
+                // ...
+            ],
+            // 'rules' => require('urls.php'),
         ],
         'user' => [
             'identityClass' => 'app\models\User',

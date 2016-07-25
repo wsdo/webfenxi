@@ -1,15 +1,1 @@
-FROM codemix/yii2-base:2.0.6-php-fpm
-#codemix/yii2-base:2.0.8-php7-fpm
-
-# 安装 v8js
-
-RUN apt-get update
-
-RUN apt-get -y install php5-dev php-pear build-essential libv8-dev php5-curl
-RUN pecl install channel://pecl.php.net/v8js-0.1.3
-RUN echo extension=v8js.so >> docker-php-ext-v8js.ini \
-
-# 用完包管理器后安排打扫卫生可以显著的减少镜像大小
-  && apt-get clean \
-  && apt-get autoclean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+FROM daocloud.io/wshudong/webfenxi-base:latest

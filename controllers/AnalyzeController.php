@@ -5,7 +5,7 @@ use yii\rest\ActiveController
 
 class Analyze extends ActiveController
 {
-	public function index()
+	public function actionIndex()
 	{
 	try {
 		// if ( php_sapi_name() !== 'cli' ) {
