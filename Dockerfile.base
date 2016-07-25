@@ -6,15 +6,40 @@ FROM codemix/yii2-base:2.0.6-php-fpm
 # COPY php/redis.tgz /home/redis.tgz
 
 # RUN pecl install /home/redis.tgz \
-  && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
+#  && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
   
 # 安装 v8js
 
+# install dependencies
 RUN apt-get update
+RUN apt-get -y install git subversion make g++ python curl chrpath && apt-get clean
 
-RUN apt-get install php5-dev php-pear build-essential libv8-dev php5-curl && apt-get clean
-RUN pecl install channel://pecl.php.net/v8js-0.1.3
-RUN echo extension=v8js.so >> /etc/php5/cli/php.ini
+# depot tools
+RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git /usr/local/depot_tools
+ENV PATH $PATH:/usr/local/depot_tools
+
+# install v8
+RUN cd /usr/local/src && fetch v8 && \
+    cd /usr/local/src/v8 && git checkout 4.9.111 && gclient sync && make x64.release library=shared snapshot=off -j4 && \
+    mkdir -p /usr/local/lib && \
+    cp /usr/local/src/v8/out/x64.release/lib.target/lib*.so /usr/local/lib && \
+    echo "create /usr/local/lib/libv8_libplatform.a\naddlib /usr/local/src/v8/out/x64.release/obj.target/tools/gyp/libv8_libplatform.a\nsave\nend" | ar -M && \
+    cp -R /usr/local/src/v8/include /usr/local && \
+    chrpath -r '$ORIGIN' /usr/local/lib/libv8.so && \
+    rm -fR /usr/local/src/v8
+
+# get v8js, compile and install
+ENV NO_INTERACTION 1
+RUN git clone https://github.com/preillyme/v8js.git /usr/local/src/v8js && \
+    cd /usr/local/src/v8js && phpize && ./configure --with-v8js=/usr/local && \
+    make all test install && \
+    echo extension=v8js.so > /etc/php/7.0/cli/conf.d/99-v8js.ini && \
+    echo extension=v8js.so > /etc/php/7.0/fpm/conf.d/99-v8js.ini && \
+    chmod 0777 /etc/php/7.0/fpm/conf.d/99-v8js.ini && \
+    chmod 0777 /etc/php/7.0/cli/conf.d/99-v8js.ini && \
+    rm -fR /usr/local/src/v8js 
+ #  service nginx reload
+
 
 
 
@@ -23,17 +48,3 @@ RUN echo extension=v8js.so >> /etc/php5/cli/php.ini
     && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-
-ENV NR_INSTALL_SILENT true
-ENV NR_PHP_INI "/usr/local/etc/php/conf.d/newrelic.ini"
-
-RUN mv /usr/local/php /usr/local/php-a \
-  && ln -s /usr/local/bin/php /usr/local/php \
-  && newrelic-install  install \
-  && unlink /usr/local/php \
-  && mv /usr/local/php-a /usr/local/php
-
-RUN sed -i 's/"REPLACE_WITH_REAL_KEY"/\${NEW_RELIC_LICENSE_KEY}/g' \
-    /usr/local/etc/php/conf.d/newrelic.ini
-RUN sed -i 's/"PHP Application"/\${NEW_RELIC_APP_NAME}/g' \
-    /usr/local/etc/php/conf.d/newrelic.ini
